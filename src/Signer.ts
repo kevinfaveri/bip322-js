@@ -21,10 +21,12 @@ class Signer {
      * @param message message_challenge to be signed by the address 
      * @returns BIP-322 simple signature, encoded in base-64
      */
-    public static sign(privateKey: string, address: string, message: string) {
+    public static sign(privateKey: Buffer, address: string, message: string) {
         // Initialize private key used to sign the transaction
         const ECPair = ECPairFactory(ecc);
-        let signer = ECPair.fromWIF(privateKey, [bitcoin.networks.bitcoin, bitcoin.networks.testnet, bitcoin.networks.regtest]);
+        let signer = ECPair.fromPrivateKey(privateKey, {
+          network: bitcoin.networks.bitcoin
+        });
         // Check if the private key can sign message for the given address
         if (!this.checkPubKeyCorrespondToAddress(signer.publicKey, address)) {
             throw new Error(`Invalid private key provided for signing message for ${address}.`);
